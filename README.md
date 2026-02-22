@@ -8,9 +8,10 @@ Telegram-бот для автоматического сбора, AI-обраб�
   - [Investing.com (RU)](https://ru.investing.com/news/cryptocurrency-news)
   - [TradingView (RU)](https://ru.tradingview.com/markets/cryptocurrencies/news/)
   - [CoinDesk (RU)](https://www.coindesk.com/ru/latest-crypto-news)
-- AI-обработка через OpenAI API:
+- AI-обработка через любой OpenAI-совместимый API:
   - Удаление гиперссылок и упоминаний источников
   - Редактирование и форматирование текста
+  - Поддержка: OpenAI, Groq, Mistral, Together AI, DeepSeek, OpenRouter и другие
 - Автоматическая публикация по расписанию в нужный топик группы
 - Хранение истории опубликованных статей (SQLite)
 
@@ -18,7 +19,7 @@ Telegram-бот для автоматического сбора, AI-обраб�
 
 - Python 3.11+
 - Telegram Bot Token ([@BotFather](https://t.me/BotFather))
-- OpenAI API Key
+- API-ключ любого OpenAI-совместимого AI-сервиса
 
 ## Установка
 
@@ -35,13 +36,35 @@ cp .env.example .env
 | Переменная | Описание |
 |---|---|
 | `TELEGRAM_BOT_TOKEN` | Токен бота от @BotFather |
-| `OPENAI_API_KEY` | Ключ OpenAI API |
+| `AI_API_KEY` | API-ключ выбранного AI-провайдера (`OPENAI_API_KEY` также поддерживается) |
+| `AI_BASE_URL` | Базовый URL API-провайдера (не задавать для OpenAI) |
+| `AI_MODEL` | Название модели (по умолчанию `gpt-4o-mini`) |
 | `NEWS_CHANNEL_ID` | ID группы/канала (отрицательное число для групп) |
 | `NEWS_TOPIC_ID` | ID топика в группе (0 = общий чат) |
 | `CHECK_INTERVAL` | Интервал проверки в секундах (по умолчанию 3600) |
 | `MAX_ARTICLES_PER_CHECK` | Макс. статей за один цикл (по умолчанию 3) |
-| `OPENAI_MODEL` | Модель OpenAI (по умолчанию `gpt-4o-mini`) |
 | `ADMIN_IDS` | ID пользователей-администраторов через запятую |
+
+## Поддерживаемые AI-провайдеры
+
+Бот использует OpenAI Python SDK с настраиваемым `base_url`, что обеспечивает
+совместимость с любым провайдером, поддерживающим OpenAI Chat Completions API.
+
+| Провайдер | `AI_BASE_URL` | Пример модели |
+|---|---|---|
+| **OpenAI** (по умолчанию) | *(не задавать)* | `gpt-4o-mini` |
+| **Groq** (быстрый, есть бесплатный тариф) | `https://api.groq.com/openai/v1` | `llama-3.3-70b-versatile` |
+| **Mistral** | `https://api.mistral.ai/v1` | `mistral-small-latest` |
+| **Together AI** | `https://api.together.xyz/v1` | `meta-llama/Llama-3-8b-chat-hf` |
+| **DeepSeek** | `https://api.deepseek.com` | `deepseek-chat` |
+| **OpenRouter** (100+ моделей) | `https://openrouter.ai/api/v1` | `anthropic/claude-3.5-sonnet` |
+
+Пример конфигурации для Groq:
+```env
+AI_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxxxxxx
+AI_BASE_URL=https://api.groq.com/openai/v1
+AI_MODEL=llama-3.3-70b-versatile
+```
 
 ## Запуск
 
@@ -76,7 +99,7 @@ python bot.py
 botfornewscrypto/
 ├── bot.py            # Точка входа, обработчики команд, планировщик
 ├── scraper.py        # Сбор статей (RSS + HTTP)
-├── ai_processor.py   # Обработка текста через OpenAI
+├── ai_processor.py   # Обработка текста через любой OpenAI-совместимый AI API
 ├── storage.py        # SQLite-хранилище опубликованных статей
 ├── config.py         # Конфигурация из переменных окружения
 ├── requirements.txt  # Зависимости Python

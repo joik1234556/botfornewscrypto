@@ -1,5 +1,9 @@
 """
-AI-powered article processor using the OpenAI API.
+AI-powered article processor.
+
+Supports any OpenAI-compatible API (OpenAI, Groq, Mistral, Together AI,
+DeepSeek, OpenRouter, Fireworks, Perplexity, …).  Configure via the
+AI_API_KEY and AI_BASE_URL environment variables.
 
 Takes a raw Article and returns a cleaned, Telegram-ready text:
   - Removes hyperlinks and source/author mentions
@@ -24,7 +28,10 @@ _client: Optional[OpenAI] = None
 def _get_client() -> OpenAI:
     global _client
     if _client is None:
-        _client = OpenAI(api_key=config.OPENAI_API_KEY)
+        kwargs: dict = {"api_key": config.AI_API_KEY}
+        if config.AI_BASE_URL:
+            kwargs["base_url"] = config.AI_BASE_URL
+        _client = OpenAI(**kwargs)
     return _client
 
 
@@ -74,7 +81,7 @@ def process_article(article: Article) -> str:
 
     try:
         response = _get_client().chat.completions.create(
-            model=config.OPENAI_MODEL,
+            model=config.AI_MODEL,
             messages=[
                 {"role": "system", "content": _SYSTEM_PROMPT},
                 {"role": "user", "content": user_message},
@@ -87,7 +94,7 @@ def process_article(article: Article) -> str:
         result = _strip_urls(result)
         return result.strip()
     except Exception as exc:
-        logger.error("OpenAI processing failed for '%s': %s", article.title, exc)
+        logger.error("AI processing failed for '%s': %s", article.title, exc)
         return ""
 
 

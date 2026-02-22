@@ -37,9 +37,19 @@ NEWS_CHANNEL_ID: int = int(os.getenv("NEWS_CHANNEL_ID", "0"))
 NEWS_TOPIC_ID: int = int(os.getenv("NEWS_TOPIC_ID", "0"))
 ADMIN_IDS: list[int] = _get_int_list("ADMIN_IDS")
 
-# OpenAI
-OPENAI_API_KEY: str = _get_required("OPENAI_API_KEY")
-OPENAI_MODEL: str = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+# AI provider — supports any OpenAI-compatible API (OpenAI, Groq, Mistral,
+# Together AI, DeepSeek, OpenRouter, Fireworks, Perplexity, …).
+# AI_API_KEY is the preferred key name; OPENAI_API_KEY is accepted as a fallback.
+AI_API_KEY: str = os.getenv("AI_API_KEY") or _get_required("OPENAI_API_KEY")
+# Optional custom base URL. Leave empty to use the default OpenAI endpoint.
+# Examples:
+#   Groq           – https://api.groq.com/openai/v1
+#   Mistral        – https://api.mistral.ai/v1
+#   Together AI    – https://api.together.xyz/v1
+#   DeepSeek       – https://api.deepseek.com
+#   OpenRouter     – https://openrouter.ai/api/v1
+AI_BASE_URL: str = os.getenv("AI_BASE_URL", "")
+AI_MODEL: str = os.getenv("AI_MODEL") or os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 
 # Scheduler
 CHECK_INTERVAL: int = int(os.getenv("CHECK_INTERVAL", "3600"))
