@@ -1,0 +1,18 @@
+# Environment variables
+.env
+
+# SQLite database (runtime data)
+*.db
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+
+# Editor
+.idea/
+.vscode/
+*.swp

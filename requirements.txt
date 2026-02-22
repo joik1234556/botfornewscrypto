@@ -1,0 +1,7 @@
+python-telegram-bot[job-queue]==21.3
+openai>=1.0.0
+feedparser>=6.0.0
+beautifulsoup4>=4.12.0
+python-dotenv>=1.0.0
+lxml>=4.9.0
+httpx>=0.26.0
